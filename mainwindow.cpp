@@ -345,7 +345,7 @@ void MainWindow::loadFile(const QString &fileName)
 #endif
 
     setCurrentFile(fileName);
-    statusBar()->showMessage(tr("File loaded"), 2000);
+    //statusBar()->showMessage(tr("File loaded"), 2000);
 }
 //! [43]
 
@@ -372,7 +372,7 @@ bool MainWindow::saveFile(const QString &fileName)
 #endif
 
     setCurrentFile(fileName);
-    statusBar()->showMessage(tr("File saved"), 2000);
+    //statusBar()->showMessage(tr("File saved"), 2000);
     return true;
 }
 //! [45]
