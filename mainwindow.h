@@ -52,11 +52,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "xmledit.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
-class QPlainTextEdit;
 class QSessionManager;
 QT_END_NAMESPACE
 
@@ -94,7 +94,7 @@ private:
     void setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
 
-    QPlainTextEdit *textEdit;
+    XmlEdit *xmlEdit;
     QString curFile;
 };
 //! [0]

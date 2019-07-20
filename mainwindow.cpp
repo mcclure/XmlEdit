@@ -56,17 +56,17 @@
 
 //! [1]
 MainWindow::MainWindow()
-    : textEdit(new QPlainTextEdit)
+    : xmlEdit(new XmlEdit)
 //! [1] //! [2]
 {
-    setCentralWidget(textEdit);
+    setCentralWidget(xmlEdit);
 
     createActions();
     //createStatusBar();
 
     readSettings();
 
-    connect(textEdit->document(), &QTextDocument::contentsChanged,
+    connect(xmlEdit, &XmlEdit::contentsChanged,
             this, &MainWindow::documentWasModified);
 
 #ifndef QT_NO_SESSIONMANAGER
@@ -98,7 +98,7 @@ void MainWindow::newFile()
 //! [5] //! [6]
 {
     if (maybeSave()) {
-        textEdit->clear();
+        xmlEdit->clear();
         setCurrentFile(QString());
     }
 }
@@ -156,7 +156,7 @@ void MainWindow::about()
 void MainWindow::documentWasModified()
 //! [15] //! [16]
 {
-    setWindowModified(textEdit->document()->isModified());
+    setWindowModified(xmlEdit->isModified());
 }
 //! [16]
 
@@ -219,7 +219,7 @@ void MainWindow::createActions()
     cutAct->setShortcuts(QKeySequence::Cut);
     cutAct->setStatusTip(tr("Cut the current selection's contents to the "
                             "clipboard"));
-    connect(cutAct, &QAction::triggered, textEdit, &QPlainTextEdit::cut);
+    connect(cutAct, &QAction::triggered, xmlEdit, &XmlEdit::cut);
     editMenu->addAction(cutAct);
     //editToolBar->addAction(cutAct);
 
@@ -228,7 +228,7 @@ void MainWindow::createActions()
     copyAct->setShortcuts(QKeySequence::Copy);
     copyAct->setStatusTip(tr("Copy the current selection's contents to the "
                              "clipboard"));
-    connect(copyAct, &QAction::triggered, textEdit, &QPlainTextEdit::copy);
+    connect(copyAct, &QAction::triggered, xmlEdit, &XmlEdit::copy);
     editMenu->addAction(copyAct);
     //editToolBar->addAction(copyAct);
 
@@ -237,7 +237,7 @@ void MainWindow::createActions()
     pasteAct->setShortcuts(QKeySequence::Paste);
     pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
                               "selection"));
-    connect(pasteAct, &QAction::triggered, textEdit, &QPlainTextEdit::paste);
+    connect(pasteAct, &QAction::triggered, xmlEdit, &XmlEdit::paste);
     editMenu->addAction(pasteAct);
     //editToolBar->addAction(pasteAct);
 
@@ -260,8 +260,8 @@ void MainWindow::createActions()
     cutAct->setEnabled(false);
 //! [23] //! [24]
     copyAct->setEnabled(false);
-    connect(textEdit, &QPlainTextEdit::copyAvailable, cutAct, &QAction::setEnabled);
-    connect(textEdit, &QPlainTextEdit::copyAvailable, copyAct, &QAction::setEnabled);
+    connect(xmlEdit, &XmlEdit::copyAvailable, cutAct, &QAction::setEnabled);
+    connect(xmlEdit, &XmlEdit::copyAvailable, copyAct, &QAction::setEnabled);
 #endif // !QT_NO_CLIPBOARD
 }
 //! [24]
@@ -304,7 +304,7 @@ void MainWindow::writeSettings()
 bool MainWindow::maybeSave()
 //! [40] //! [41]
 {
-    if (!textEdit->document()->isModified())
+    if (!xmlEdit->isModified())
         return true;
     const QMessageBox::StandardButton ret
         = QMessageBox::warning(this, tr("Application"),
@@ -327,6 +327,7 @@ bool MainWindow::maybeSave()
 void MainWindow::loadFile(const QString &fileName)
 //! [42] //! [43]
 {
+#if 0
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Application"),
@@ -346,6 +347,7 @@ void MainWindow::loadFile(const QString &fileName)
 
     setCurrentFile(fileName);
     //statusBar()->showMessage(tr("File loaded"), 2000);
+#endif
 }
 //! [43]
 
@@ -353,6 +355,9 @@ void MainWindow::loadFile(const QString &fileName)
 bool MainWindow::saveFile(const QString &fileName)
 //! [44] //! [45]
 {
+#if 0
+    // Hand off filename, set not modified
+
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, tr("Application"),
@@ -374,6 +379,8 @@ bool MainWindow::saveFile(const QString &fileName)
     setCurrentFile(fileName);
     //statusBar()->showMessage(tr("File saved"), 2000);
     return true;
+#endif
+    return false;
 }
 //! [45]
 
@@ -382,12 +389,11 @@ void MainWindow::setCurrentFile(const QString &fileName)
 //! [46] //! [47]
 {
     curFile = fileName;
-    textEdit->document()->setModified(false);
     setWindowModified(false);
 
     QString shownName = curFile;
     if (curFile.isEmpty())
-        shownName = "untitled.txt";
+        shownName = "untitled.xml";
     setWindowFilePath(shownName);
 }
 //! [47]
@@ -407,7 +413,7 @@ void MainWindow::commitData(QSessionManager &manager)
             manager.cancel();
     } else {
         // Non-interactive: save without asking
-        if (textEdit->document()->isModified())
+        if (xmlEdit->isModified())
             save();
     }
 }
