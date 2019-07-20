@@ -62,7 +62,7 @@ MainWindow::MainWindow()
     setCentralWidget(textEdit);
 
     createActions();
-    createStatusBar();
+    //createStatusBar();
 
     readSettings();
 
@@ -166,14 +166,14 @@ void MainWindow::createActions()
 {
 
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-    QToolBar *fileToolBar = addToolBar(tr("File"));
+    //QToolBar *fileToolBar = addToolBar(tr("File"));
     const QIcon newIcon = QIcon::fromTheme("document-new", QIcon(":/images/new.png"));
     QAction *newAct = new QAction(newIcon, tr("&New"), this);
     newAct->setShortcuts(QKeySequence::New);
     newAct->setStatusTip(tr("Create a new file"));
     connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
     fileMenu->addAction(newAct);
-    fileToolBar->addAction(newAct);
+    //fileToolBar->addAction(newAct);
 
 //! [19]
     const QIcon openIcon = QIcon::fromTheme("document-open", QIcon(":/images/open.png"));
@@ -182,7 +182,7 @@ void MainWindow::createActions()
     openAct->setStatusTip(tr("Open an existing file"));
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
     fileMenu->addAction(openAct);
-    fileToolBar->addAction(openAct);
+    //fileToolBar->addAction(openAct);
 //! [18] //! [19]
 
     const QIcon saveIcon = QIcon::fromTheme("document-save", QIcon(":/images/save.png"));
@@ -191,7 +191,7 @@ void MainWindow::createActions()
     saveAct->setStatusTip(tr("Save the document to disk"));
     connect(saveAct, &QAction::triggered, this, &MainWindow::save);
     fileMenu->addAction(saveAct);
-    fileToolBar->addAction(saveAct);
+    //fileToolBar->addAction(saveAct);
 
     const QIcon saveAsIcon = QIcon::fromTheme("document-save-as");
     QAction *saveAsAct = fileMenu->addAction(saveAsIcon, tr("Save &As..."), this, &MainWindow::saveAs);
@@ -210,7 +210,7 @@ void MainWindow::createActions()
 
 //! [21]
     QMenu *editMenu = menuBar()->addMenu(tr("&Edit"));
-    QToolBar *editToolBar = addToolBar(tr("Edit"));
+    //QToolBar *editToolBar = addToolBar(tr("Edit"));
 //!
 #ifndef QT_NO_CLIPBOARD
     const QIcon cutIcon = QIcon::fromTheme("edit-cut", QIcon(":/images/cut.png"));
@@ -221,7 +221,7 @@ void MainWindow::createActions()
                             "clipboard"));
     connect(cutAct, &QAction::triggered, textEdit, &QPlainTextEdit::cut);
     editMenu->addAction(cutAct);
-    editToolBar->addAction(cutAct);
+    //editToolBar->addAction(cutAct);
 
     const QIcon copyIcon = QIcon::fromTheme("edit-copy", QIcon(":/images/copy.png"));
     QAction *copyAct = new QAction(copyIcon, tr("&Copy"), this);
@@ -230,7 +230,7 @@ void MainWindow::createActions()
                              "clipboard"));
     connect(copyAct, &QAction::triggered, textEdit, &QPlainTextEdit::copy);
     editMenu->addAction(copyAct);
-    editToolBar->addAction(copyAct);
+    //editToolBar->addAction(copyAct);
 
     const QIcon pasteIcon = QIcon::fromTheme("edit-paste", QIcon(":/images/paste.png"));
     QAction *pasteAct = new QAction(pasteIcon, tr("&Paste"), this);
@@ -239,7 +239,7 @@ void MainWindow::createActions()
                               "selection"));
     connect(pasteAct, &QAction::triggered, textEdit, &QPlainTextEdit::paste);
     editMenu->addAction(pasteAct);
-    editToolBar->addAction(pasteAct);
+    //editToolBar->addAction(pasteAct);
 
     menuBar()->addSeparator();
 
