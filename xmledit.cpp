@@ -54,10 +54,21 @@ static const QString &nodeTypeName(QDomNode::NodeType nodeType) {
 void XmlEdit::addNode(QDomNode node, int depth) {
 	QWidget *pane = new QWidget(widget());
 
-	QVBoxLayout *vPaneLayout = new QVBoxLayout(pane);
-	pane->setLayout(vPaneLayout);
+	QWidget *content = pane;
+	if (depth > 0) {
+		QHBoxLayout *hPaneLayout = new QHBoxLayout(pane);
+		hPaneLayout->setContentsMargins(0,0,0,0);
+		pane->setLayout(hPaneLayout);
+		hPaneLayout->addSpacing(depth*40);
+		content = new QWidget(pane);
+		hPaneLayout->addWidget(content);
+	}
 
-	QLabel *kindLabel = new QLabel(pane); vPaneLayout->addWidget(kindLabel);
+	QVBoxLayout *vContentLayout = new QVBoxLayout(content);
+	vContentLayout->setContentsMargins(0,0,0,0);
+	content->setLayout(vContentLayout);
+
+	QLabel *kindLabel = new QLabel(content); vContentLayout->addWidget(kindLabel);
 	kindLabel->setText(nodeTypeName(node.nodeType()));
 	switch(node.nodeType()) {
 		case QDomNode::ElementNode:
@@ -83,7 +94,8 @@ void XmlEdit::addNode(QDomNode node, int depth) {
 	}
 	//label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 	//label->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-	vLayout->addWidget(kindLabel);
+	vContentLayout->addWidget(kindLabel);
+	vLayout->addWidget(pane);
 }
 
 bool XmlEdit::isModified() const {
