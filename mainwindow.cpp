@@ -327,27 +327,20 @@ bool MainWindow::maybeSave()
 void MainWindow::loadFile(const QString &fileName)
 //! [42] //! [43]
 {
-#if 0
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("Application"),
+        QMessageBox::warning(this, tr("XML editor"),
                              tr("Cannot read file %1:\n%2.")
-                             .arg(QDir::toNativeSeparators(fileName), file.errorString()));
+                             .arg(QDir::toNativeSeparators(fileName),
+                                  file.errorString()));
         return;
     }
 
-    QTextStream in(&file);
-#ifndef QT_NO_CURSOR
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-#endif
-    textEdit->setPlainText(in.readAll());
-#ifndef QT_NO_CURSOR
-    QGuiApplication::restoreOverrideCursor();
-#endif
+    if (!xmlEdit->read(&file)) { // Will print own message box
+        return;
+    }
 
     setCurrentFile(fileName);
-    //statusBar()->showMessage(tr("File loaded"), 2000);
-#endif
 }
 //! [43]
 
@@ -355,32 +348,26 @@ void MainWindow::loadFile(const QString &fileName)
 bool MainWindow::saveFile(const QString &fileName)
 //! [44] //! [45]
 {
-#if 0
-    // Hand off filename, set not modified
+    if (fileName.isEmpty())
+        return false;
 
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("Application"),
+        QMessageBox::warning(this, tr("XML editor"),
                              tr("Cannot write file %1:\n%2.")
                              .arg(QDir::toNativeSeparators(fileName),
                                   file.errorString()));
         return false;
     }
 
-    QTextStream out(&file);
-#ifndef QT_NO_CURSOR
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-#endif
-    out << textEdit->toPlainText();
-#ifndef QT_NO_CURSOR
-    QGuiApplication::restoreOverrideCursor();
-#endif
+    if (!xmlEdit->write(&file)) {
+        QMessageBox::warning(this, tr("XML editor"),
+                     tr("Cannot read file %1:\nUnknown XML ecoding error.")
+                     .arg(QDir::toNativeSeparators(fileName)));
+        return false;
+    }
 
-    setCurrentFile(fileName);
-    //statusBar()->showMessage(tr("File saved"), 2000);
     return true;
-#endif
-    return false;
 }
 //! [45]
 

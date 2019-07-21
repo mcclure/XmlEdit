@@ -1,4 +1,5 @@
 QT += widgets
+QT += xml
 requires(qtConfig(filedialog))
 
 HEADERS       = mainwindow.h \

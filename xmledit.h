@@ -2,19 +2,56 @@
 #define XMLEDIT_H
 
 #include <QAbstractScrollArea>
+#include <QDomDocument>
 
 // Frustratingly, Qt has no abstract document class.
 // They have a text document class but it cannot be separated from its text model.
 // Therefore, this class reimplements much of the interface of QPlainTextEdit and QTextDocument.
-class XmlEdit : public QAbstractScrollArea
+class DocumentEdit : public QAbstractScrollArea
 {
     Q_OBJECT
+
+protected:
+
+public:
+    DocumentEdit() {}
+    virtual ~DocumentEdit() {}
+
+    virtual bool isModified() const = 0;
+
+public Q_SLOTS:
+#ifndef QT_NO_CLIPBOARD
+	virtual void cut() = 0;
+    virtual void copy() = 0;
+    virtual void paste() = 0;
+#endif
+    //virtual void undo() = 0;
+    //virtual void redo() = 0;
+    virtual void clear() = 0; // Also resets file state
+    virtual void clearUi() = 0; // Also resets file state
+Q_SIGNALS:
+	void contentsChanged();
+    void copyAvailable(bool b);
+    //void undoAvailable(bool);
+    //void redoAvailable(bool);
+    //void undoCommandAdded();
+};
+
+class XmlEdit : public DocumentEdit
+{
+    Q_OBJECT
+
+protected:
+	QDomDocument domDocument; // "Model"
 
 public:
     XmlEdit();
     virtual ~XmlEdit();
 
     bool isModified() const;
+
+    bool read(QIODevice *device);
+    bool write(QIODevice *device) const;
 
 public Q_SLOTS:
 #ifndef QT_NO_CLIPBOARD
@@ -25,12 +62,8 @@ public Q_SLOTS:
     //void undo();
     //void redo();
     void clear(); // Also resets file state
-Q_SIGNALS:
-	void contentsChanged();
-    //void undoAvailable(bool);
-    //void redoAvailable(bool);
-    //void undoCommandAdded();
-    void copyAvailable(bool b);
+    void clearUi(); // Also resets file state
 };
+
 
 #endif
