@@ -3,6 +3,8 @@
 #include <QTextStream>
 #include <QStack>
 #include <QLabel>
+#include <QLineEdit>
+#include <QPlainTextEdit>
 
 DocumentEdit::DocumentEdit(QWidget *parent) : QScrollArea(parent) {
 	setWidgetResizable(true);
@@ -70,17 +72,64 @@ void XmlEdit::addNode(QDomNode node, int depth) {
 
 	QLabel *kindLabel = new QLabel(content); vContentLayout->addWidget(kindLabel);
 	kindLabel->setText(nodeTypeName(node.nodeType()));
+	vContentLayout->addWidget(kindLabel);
 	switch(node.nodeType()) {
-		case QDomNode::ElementNode:
+		case QDomNode::ElementNode: {
+			QDomElement element = node.toElement();
 
-			break;
+			QLineEdit *tagEdit = new QLineEdit(content);
+			vContentLayout->addWidget(tagEdit);
+			QFontMetrics metrics(tagEdit->font());
+			int columnWidth = metrics.averageCharWidth();
+			tagEdit->setFixedWidth(30*columnWidth);
+			tagEdit->setText(element.tagName());
+
+			QDomNamedNodeMap attributes = element.attributes();
+			for(int c = 0; c < attributes.length(); c++) {
+				QDomNode attributeNode = attributes.item(c);
+				QDomAttr attribute = attributeNode.toAttr();
+				if (!attribute.isNull()) {
+					QWidget *assign = new QWidget(content);
+					QHBoxLayout *hAssignLayout = new QHBoxLayout(assign);
+					hAssignLayout->setContentsMargins(0,0,0,0);
+					assign->setLayout(hAssignLayout);
+					vContentLayout->addWidget(assign);
+
+					QLineEdit *assignLeft = new QLineEdit(assign);
+					hAssignLayout->addWidget(assignLeft);
+					assignLeft->setFixedWidth(30*columnWidth);
+					assignLeft->setText(attribute.name());
+
+					QLabel *assignLabel = new QLabel("=", assign);
+					hAssignLayout->addWidget(assignLabel);
+
+					QLineEdit *assignRight = new QLineEdit(assign);
+					hAssignLayout->addWidget(assignRight);
+					assignRight->setFixedWidth(38*columnWidth);
+					assignRight->setText(attribute.value());
+
+					hAssignLayout->addStretch();
+				}
+			}
+		} break;
 		case QDomNode::TextNode:
-		case QDomNode::CommentNode:
+		case QDomNode::CommentNode: {
+			QDomCharacterData data = node.toCharacterData();
+			QPlainTextEdit *textEdit = new QPlainTextEdit(content);
 
-			break;
+			QFontMetrics metrics(textEdit->font());
+			int rowHeight = metrics.lineSpacing();
+			int columnWidth = metrics.averageCharWidth();
+			textEdit->setFixedHeight(6*rowHeight);
+			textEdit->setFixedWidth(80*columnWidth);
+
+			textEdit->setPlainText(data.data());
+			vContentLayout->addWidget(textEdit);
+		} break;
 		// These should be impossible
 		case QDomNode::AttributeNode:
 		case QDomNode::BaseNode:
+		case QDomNode::CharacterDataNode:
 		// I don't know what these are
 		case QDomNode::ProcessingInstructionNode:
 		case QDomNode::DocumentNode:
@@ -90,11 +139,11 @@ void XmlEdit::addNode(QDomNode node, int depth) {
 		case QDomNode::CDATASectionNode:
 		case QDomNode::EntityReferenceNode:
 		case QDomNode::EntityNode:
-		case QDomNode::CharacterDataNode: break;
+			break;
 	}
 	//label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
 	//label->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-	vContentLayout->addWidget(kindLabel);
+
 	vLayout->addWidget(pane);
 }
 
