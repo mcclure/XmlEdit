@@ -1,13 +1,76 @@
 #include "xmledit.h"
 #include <QMessageBox>
 #include <QTextStream>
+#include <QStack>
+#include <QLabel>
 
 XmlEdit::XmlEdit() {
-
+	vLayout = new QVBoxLayout(this);
+	this->setLayout(vLayout);
 }
 
 XmlEdit::~XmlEdit() {
 	
+}
+
+static const QString &nodeTypeName(QDomNode::NodeType nodeType) {
+	static QString Element("Element"), Attribute("Attribute"), Text("Text"),
+		CDATA("CData"), EntityReference("Entity Reference"), Entity("Entity"),
+		ProcessingInstruction("Processing Instruction"), Comment("Comment"),
+		Document("Document"), DocumentType("Document Type"),
+		DocumentFragment("DocumentFragment"), Notation("Notation"),
+		Base("Untyped?"), CharacterData("CharacterData");
+	switch(nodeType) {
+		case QDomNode::ElementNode:               return Element;
+		case QDomNode::AttributeNode:             return Attribute;
+		case QDomNode::TextNode:                  return Text;
+		case QDomNode::CDATASectionNode:          return CDATA;
+		case QDomNode::EntityReferenceNode:       return EntityReference;
+		case QDomNode::EntityNode:                return Entity;
+		case QDomNode::ProcessingInstructionNode: return ProcessingInstruction;
+		case QDomNode::CommentNode:               return Comment;
+		case QDomNode::DocumentNode:              return Document;
+		case QDomNode::DocumentTypeNode:          return DocumentType;
+		case QDomNode::DocumentFragmentNode:      return DocumentFragment;
+		case QDomNode::NotationNode:              return Notation;
+		case QDomNode::BaseNode:                  return Base;
+		case QDomNode::CharacterDataNode:         return CharacterData;
+	}
+} 
+
+void XmlEdit::addNode(QDomNode node, int depth) {
+	QWidget *pane = new QWidget(this);
+
+	QVBoxLayout *vPaneLayout = new QVBoxLayout(pane);
+	pane->setLayout(vPaneLayout);
+
+	QLabel *kindLabel = new QLabel(pane); vPaneLayout->addWidget(kindLabel);
+	kindLabel->setText(nodeTypeName(node.nodeType()));
+	switch(node.nodeType()) {
+		case QDomNode::ElementNode:
+
+			break;
+		case QDomNode::TextNode:
+		case QDomNode::CommentNode:
+
+			break;
+		// These should be impossible
+		case QDomNode::AttributeNode:
+		case QDomNode::BaseNode:
+		// I don't know what these are
+		case QDomNode::ProcessingInstructionNode:
+		case QDomNode::DocumentNode:
+		case QDomNode::DocumentTypeNode:
+		case QDomNode::DocumentFragmentNode:
+		case QDomNode::NotationNode:
+		case QDomNode::CDATASectionNode:
+		case QDomNode::EntityReferenceNode:
+		case QDomNode::EntityNode:
+		case QDomNode::CharacterDataNode: break;
+	}
+	//label->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+	//label->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+	vLayout->addWidget(kindLabel);
 }
 
 bool XmlEdit::isModified() const {
@@ -41,9 +104,28 @@ bool XmlEdit::read(QIODevice *device) {
         return false;
     }
 
-    clear();
+    clearUi();
 
-    // Upload dom contents
+    QDomElement root = domDocument.documentElement();
+    QMessageBox::information(window(), tr("XML Editor"),
+                         tr("Loaded: %1")
+                         .arg(root.tagName()));
+
+    QStack<QDomNode> stack;
+    QDomNode current = root;
+
+    while(1) {
+    	if (!current.isNull()) {
+    		addNode(current, stack.count());
+    		stack.push(current);
+    		current = current.firstChild();
+    	} else if (!stack.count()) {
+    		break;
+    	} else {
+    		current = stack.pop().nextSibling();
+    	}
+    }
+
     return true;
 }
 

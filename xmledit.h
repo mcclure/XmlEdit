@@ -3,6 +3,7 @@
 
 #include <QAbstractScrollArea>
 #include <QDomDocument>
+#include <QVBoxLayout>
 
 // Frustratingly, Qt has no abstract document class.
 // They have a text document class but it cannot be separated from its text model.
@@ -43,6 +44,9 @@ class XmlEdit : public DocumentEdit
 
 protected:
 	QDomDocument domDocument; // "Model"
+	QVBoxLayout *vLayout;
+
+	void addNode(QDomNode node, int depth);
 
 public:
     XmlEdit();
