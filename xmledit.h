@@ -1,21 +1,21 @@
 #ifndef XMLEDIT_H
 #define XMLEDIT_H
 
-#include <QAbstractScrollArea>
+#include <QScrollArea>
 #include <QDomDocument>
 #include <QVBoxLayout>
 
 // Frustratingly, Qt has no abstract document class.
 // They have a text document class but it cannot be separated from its text model.
 // Therefore, this class reimplements much of the interface of QPlainTextEdit and QTextDocument.
-class DocumentEdit : public QAbstractScrollArea
+class DocumentEdit : public QScrollArea
 {
     Q_OBJECT
 
 protected:
 
 public:
-    DocumentEdit() {}
+    explicit DocumentEdit(QWidget *parent = nullptr);
     virtual ~DocumentEdit() {}
 
     virtual bool isModified() const = 0;
@@ -29,7 +29,7 @@ public Q_SLOTS:
     //virtual void undo() = 0;
     //virtual void redo() = 0;
     virtual void clear() = 0; // Also resets file state
-    virtual void clearUi() = 0; // Also resets file state
+    virtual void clearUi(); // Also resets file state
 Q_SIGNALS:
 	void contentsChanged();
     void copyAvailable(bool b);
@@ -49,7 +49,7 @@ protected:
 	void addNode(QDomNode node, int depth);
 
 public:
-    XmlEdit();
+    explicit XmlEdit(QWidget *parent = nullptr);
     virtual ~XmlEdit();
 
     bool isModified() const;

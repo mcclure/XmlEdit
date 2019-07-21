@@ -4,13 +4,26 @@
 #include <QStack>
 #include <QLabel>
 
-XmlEdit::XmlEdit() {
-	vLayout = new QVBoxLayout(this);
-	this->setLayout(vLayout);
+DocumentEdit::DocumentEdit(QWidget *parent) : QScrollArea(parent) {
+	setWidgetResizable(true);
+}
+
+void DocumentEdit::clearUi() {
+	setWidget(new QWidget());
+}
+
+XmlEdit::XmlEdit(QWidget *parent) : DocumentEdit(parent), vLayout(NULL) {
 }
 
 XmlEdit::~XmlEdit() {
 	
+}
+
+void XmlEdit::clearUi() {
+	DocumentEdit::clearUi();
+
+	vLayout = new QVBoxLayout(widget());
+	widget()->setLayout(vLayout);
 }
 
 static const QString &nodeTypeName(QDomNode::NodeType nodeType) {
@@ -39,7 +52,7 @@ static const QString &nodeTypeName(QDomNode::NodeType nodeType) {
 } 
 
 void XmlEdit::addNode(QDomNode node, int depth) {
-	QWidget *pane = new QWidget(this);
+	QWidget *pane = new QWidget(widget());
 
 	QVBoxLayout *vPaneLayout = new QVBoxLayout(pane);
 	pane->setLayout(vPaneLayout);
@@ -107,10 +120,6 @@ bool XmlEdit::read(QIODevice *device) {
     clearUi();
 
     QDomElement root = domDocument.documentElement();
-    QMessageBox::information(window(), tr("XML Editor"),
-                         tr("Loaded: %1")
-                         .arg(root.tagName()));
-
     QStack<QDomNode> stack;
     QDomNode current = root;
 
@@ -143,6 +152,3 @@ void XmlEdit::clear() { // Also resets file state
 	clearUi();
 }
 
-void XmlEdit::clearUi() { // Also resets file state
-	
-}
