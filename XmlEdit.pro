@@ -3,7 +3,8 @@ QT += xml
 requires(qtConfig(filedialog))
 
 HEADERS       = mainwindow.h \
-                xmledit.h
+                xmledit.h \
+                watchers.h
 SOURCES       = main.cpp \
                 mainwindow.cpp \
                 xmledit.cpp

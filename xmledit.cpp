@@ -53,6 +53,8 @@ static const QString &nodeTypeName(QDomNode::NodeType nodeType) {
 	}
 } 
 
+#include <watchers.h>
+
 void XmlEdit::addNode(QDomNode node, int depth) {
 	QWidget *pane = new QWidget(widget());
 
@@ -125,6 +127,8 @@ void XmlEdit::addNode(QDomNode node, int depth) {
 
 			textEdit->setPlainText(data.data());
 			vContentLayout->addWidget(textEdit);
+
+			new CharacterDataWatcher(textEdit, data);
 		} break;
 		// These should be impossible
 		case QDomNode::AttributeNode:
