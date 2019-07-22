@@ -2,6 +2,8 @@
 
 #include <QPlainTextEdit>
 #include <QDomCharacterData>
+#include <QLineEdit>
+#include <QDomElement>
 
 class CharacterDataWatcher : public QObject {
 	Q_OBJECT
@@ -38,20 +40,26 @@ public Q_SLOTS:
 class AttrWatcher : public QObject {
 	Q_OBJECT
 protected:
-	QLineEdit* edit;
-	QDomAttr data;
-	bool isValue;
+	QString previousName;
+	QLineEdit* nameEdit;
+	QLineEdit* valueEdit;
+	QDomElement data;
 public:
-	AttrWatcher(QLineEdit* _edit, const QDomAttr &_data, bool _isValue) : QObject(_edit), edit(_edit), data(_data), isValue(_isValue) {
-		connect(edit, &QLineEdit::textChanged,
-            this, &AttrWatcher::changed);
+	AttrWatcher(QLineEdit* _nameEdit, QLineEdit* _valueEdit, const QDomElement &_data) : QObject(_nameEdit), nameEdit(_nameEdit), valueEdit(_valueEdit), data(_data) {
+		previousName = nameEdit->text();
+		connect(nameEdit, &QLineEdit::textChanged,
+            this, &AttrWatcher::nameChanged);
+		connect(valueEdit, &QLineEdit::textChanged,
+            this, &AttrWatcher::valueChanged);
 	}
 public Q_SLOTS:
-	void changed() {
-		if (isValue)
-			data.setValue(edit->text());
-		else
-			data.setName(edit->text());
+	void nameChanged() {
+		data.removeAttribute(previousName);
+		previousName = nameEdit->text();
+		data.setAttribute(previousName, valueEdit->text());
+	}
+	void valueChanged() {
+		data.setAttribute(previousName, valueEdit->text());
 	}
 };
 
