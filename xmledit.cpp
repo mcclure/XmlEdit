@@ -86,6 +86,8 @@ void XmlEdit::addNode(QDomNode node, int depth) {
 			tagEdit->setFixedWidth(30*columnWidth);
 			tagEdit->setText(element.tagName());
 
+			new TagNameWatcher(tagEdit, element);
+
 			QDomNamedNodeMap attributes = element.attributes();
 			for(int c = 0; c < attributes.length(); c++) {
 				QDomNode attributeNode = attributes.item(c);
@@ -101,6 +103,7 @@ void XmlEdit::addNode(QDomNode node, int depth) {
 					hAssignLayout->addWidget(assignLeft);
 					assignLeft->setFixedWidth(30*columnWidth);
 					assignLeft->setText(attribute.name());
+					new AttrWatcher(assignLeft, attribute, false);
 
 					QLabel *assignLabel = new QLabel("=", assign);
 					hAssignLayout->addWidget(assignLabel);
@@ -109,6 +112,7 @@ void XmlEdit::addNode(QDomNode node, int depth) {
 					hAssignLayout->addWidget(assignRight);
 					assignRight->setFixedWidth(38*columnWidth);
 					assignRight->setText(attribute.value());
+					new AttrWatcher(assignRight, attribute, true);
 
 					hAssignLayout->addStretch();
 				}

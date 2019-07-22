@@ -19,4 +19,41 @@ public Q_SLOTS:
 	}
 };
 
+class TagNameWatcher : public QObject {
+	Q_OBJECT
+protected:
+	QLineEdit* edit;
+	QDomElement data;
+public:
+	TagNameWatcher(QLineEdit* _edit, const QDomElement &_data) : QObject(_edit), edit(_edit), data(_data) {
+		connect(edit, &QLineEdit::textChanged,
+            this, &TagNameWatcher::changed);
+	}
+public Q_SLOTS:
+	void changed() {
+		data.setTagName(edit->text());
+	}
+};
+
+class AttrWatcher : public QObject {
+	Q_OBJECT
+protected:
+	QLineEdit* edit;
+	QDomAttr data;
+	bool isValue;
+public:
+	AttrWatcher(QLineEdit* _edit, const QDomAttr &_data, bool _isValue) : QObject(_edit), edit(_edit), data(_data), isValue(_isValue) {
+		connect(edit, &QLineEdit::textChanged,
+            this, &AttrWatcher::changed);
+	}
+public Q_SLOTS:
+	void changed() {
+		if (isValue)
+			data.setValue(edit->text());
+		else
+			data.setName(edit->text());
+	}
+};
+
+
 #endif
