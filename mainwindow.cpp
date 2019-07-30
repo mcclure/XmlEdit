@@ -128,6 +128,14 @@ bool MainWindow::save()
 }
 //! [10]
 
+void MainWindow::revert()
+//! [9] //! [10]
+{
+    if (!curFile.isEmpty()) {
+        loadFile(curFile);
+    }
+}
+
 //! [11]
 bool MainWindow::saveAs()
 //! [11] //! [12]
@@ -146,9 +154,8 @@ void MainWindow::about()
 //! [13] //! [14]
 {
    QMessageBox::about(this, tr("About Application"),
-            tr("The <b>Application</b> example demonstrates how to "
-               "write modern GUI applications using Qt, with a menu bar, "
-               "toolbars, and a status bar."));
+            tr("This program lets you edit the data in XML files as text, "
+               "handling XML formatting and escaping for you."));
 }
 //! [14]
 
@@ -197,6 +204,11 @@ void MainWindow::createActions()
     QAction *saveAsAct = fileMenu->addAction(saveAsIcon, tr("Save &As..."), this, &MainWindow::saveAs);
     saveAsAct->setShortcuts(QKeySequence::SaveAs);
     saveAsAct->setStatusTip(tr("Save the document under a new name"));
+
+    fileMenu->addSeparator();
+
+    QAction *revertAct = fileMenu->addAction(tr("Revert"), this, &MainWindow::revert);
+    revertAct->setStatusTip(tr("Revert the document"));
 
 //! [20]
 
