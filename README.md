@@ -14,14 +14,16 @@ Then run:
 
     make
 
-Or on Windows: ???
+(Or, on Windows:)
+
+    nmake
 
 # Using
 
 ## Known problems
 
 * No undo
-* On save, whitespace and attribute order will not be preserved
+* On save: whitespace, attribute order, and superfluous-but-intentional XML escaping will not be preserved
 * Can't reorder elements
 * Can't add or remove elements
 * Open/save starts at system root every time :/
@@ -32,7 +34,7 @@ This application will likely get unacceptably slow for very large (hundreds of m
 
 # License
 
-The Qt libraries have a LGPL license. The Qt example code has a BSD license. All new code in this repo is by <<andi.m.mcclure@gmail.com>> and is MIT licensed:
+The Qt libraries have a LGPL license. The Qt example code this is based on has a BSD license. All new code in this repo is by <<andi.m.mcclure@gmail.com>> and is MIT licensed:
 
 > Copyright 2019 Andi McClure
 > 
