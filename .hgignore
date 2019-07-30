@@ -5,3 +5,4 @@
 moc_*
 ^Makefile
 .+\.o
+^icons/XmlEdit.iconset
