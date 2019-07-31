@@ -9,7 +9,7 @@ mac.icns: XmlEdit.iconset/sentinel
 windows.ico: XmlEdit.iconset/sentinel
 	# Technique from https://doc.qt.io/qt-5/qtwidgets-widgets-icons-example.html
 	convert XmlEdit.iconset/icon_16x16.png XmlEdit.iconset/icon_32x32.png \
-	        XmlEdit.iconset/icon_256x256.png icon.ico
+	        XmlEdit.iconset/icon_256x256.png windows.ico
 
 XmlEdit.iconset/sentinel: XmlEdit.png XmlEdit_16_retina.png
 	# Technique from https://stackoverflow.com/a/20703594
